@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/fbaudiences" name="fbaudiences" xmlns="http://ws.apache.org/ns/synapse">
+    
+    <resource methods="POST" uri-template="/fetchallaudiences">
+        <inSequence>
+            <facebookAds.getCustomAudiences configKey="FB_CON">
+                <adAccountId>{json-eval($.accountId)}</adAccountId>
+            </facebookAds.getCustomAudiences>
+            <respond />
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource>
+    <resource methods="POST" uri-template="/filteraudiences">
+        <inSequence>
+            <facebookAds.getCustomAudiences configKey="FB_CON">
+                <adAccountId>{json-eval($.accountId)}</adAccountId>
+                <filterByName>{json-eval($.name)}</filterByName>
+            </facebookAds.getCustomAudiences>
+            <respond />
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource>
+    <resource methods="POST" uri-template="/adduserstoaudience">
+        <inSequence>
+            <property name="audienceId" scope="default" type="STRING"
+                expression="json-eval($.audienceId)" />
+            <property name="filePath" scope="default" type="STRING"
+                expression="json-eval($.filePath)" />
+            <file.read configKey="FILE_CON">
+                <path>{get-property('filePath')}</path>
+                <readMode>Complete File</readMode>
+                <includeResultTo>Message Body</includeResultTo>
+                <enableStreaming>false</enableStreaming>
+                <enableLock>false</enableLock>
+                <maxRetries>3</maxRetries>
+                <retryDelay>2000</retryDelay>
+                <encoding>UTF-8</encoding>
+            </file.read>
+            <CSV.csvToJson>
+                <headerPresent>Present</headerPresent>
+                <csvEmptyValues>Empty</csvEmptyValues>
+                <skipHeader>false</skipHeader>
+            </CSV.csvToJson>
+            <facebookAds.addUsersToAudience configKey="FB_CON">
+                <inputStructure>JSON_ARRAY</inputStructure>
+                <customAudienceId>{get-property('audienceId')}</customAudienceId>
+                <properties>{json-eval($.)}</properties>
+            </facebookAds.addUsersToAudience>
+            <respond />
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource>
+    <resource methods="POST" uri-template="/removeusersfromaudience">
+                <inSequence>
+            <property name="audienceId" scope="default" type="STRING"
+                expression="json-eval($.audienceId)" />
+            <property name="filePath" scope="default" type="STRING"
+                expression="json-eval($.filePath)" />
+            <file.read configKey="FILE_CON">
+                <path>{get-property('filePath')}</path>
+                <readMode>Complete File</readMode>
+                <includeResultTo>Message Body</includeResultTo>
+                <enableStreaming>false</enableStreaming>
+                <enableLock>false</enableLock>
+                <maxRetries>3</maxRetries>
+                <retryDelay>2000</retryDelay>
+                <encoding>UTF-8</encoding>
+            </file.read>
+            <CSV.csvToJson>
+                <headerPresent>Present</headerPresent>
+                <csvEmptyValues>Empty</csvEmptyValues>
+                <skipHeader>false</skipHeader>
+            </CSV.csvToJson>
+            <facebookAds.removeUsersFromAudience configKey="FB_CON">
+                <inputStructure>JSON_ARRAY</inputStructure>
+                <customAudienceId>{get-property('audienceId')}</customAudienceId>
+                <properties>{json-eval($.)}</properties>
+            </facebookAds.removeUsersFromAudience>
+            <respond />
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource>
+    <resource methods="POST" uri-template="/inputstructure">
+        <inSequence>
+            <facebookAds.addUsersToAudience configKey="FB_CON">
+                <customAudienceId>{json-eval($.audienceId)}</customAudienceId>
+                <properties>{json-eval($.properties)}</properties>
+                <inputStructure>JSON_ARRAY</inputStructure>
+            </facebookAds.addUsersToAudience>
+            <respond />
+        </inSequence>
+        <faultSequence>
+        </faultSequence>
+    </resource></api>

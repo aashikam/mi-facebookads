@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<localEntry key="FB_CON" xmlns="http://ws.apache.org/ns/synapse">
+  <facebookAds.init>
+    <connectionType>facebookAds</connectionType>
+    <name>FB_CON</name>
+    <base>https://graph.facebook.com/v21.0</base>
+    <accessToken>Access Token here</accessToken>
+  </facebookAds.init>
+</localEntry>
